@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>ONYX</title>
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ONYX">
+  <meta name="theme-color" content="#030507">
+
+  <link rel="apple-touch-icon" href="./IMG_2448.jpeg">
+  <link rel="apple-touch-icon" sizes="180x180" href="./IMG_2448.jpeg">
+  <link rel="icon" type="image/jpeg" href="./IMG_2448.jpeg">
+
+  <style>
+    :root {
+      --bg: #030507;
+      --card: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #00ff88;
+      --accent-glow: rgba(0, 255, 136, 0.35);
+      --cyan: #00e5ff;
+      --text-main: #f8fafc;
+      --text-muted: #64748b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      overflow: hidden;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: max(16px, env(safe-area-inset-top)) 20px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(3, 5, 7, 0.98), rgba(3, 5, 7, 0.85));
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      z-index: 20;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: #fff;
+    }
+
+    .connection-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(0, 255, 136, 0.08);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+    }
+
+    .search-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 12px 16px 12px 42px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.25s ease;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    main {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 8px 20px 130px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .wave-wrapper {
+      position: relative;
+      border-radius: 26px;
+      height: 180px;
+      min-height: 180px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+      background: radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.15), transparent 50%),
+                  radial-gradient(circle at 20% 80%, rgba(0, 229, 255, 0.12), transparent 50%),
+                  #05080c;
+    }
+
+    canvas#wave-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .wave-overlay {
+      position: absolute;
+      inset: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: linear-gradient(180deg, rgba(3,5,7,0.15) 0%, rgba(3,5,7,0.85) 100%);
+      pointer-events: none;
+    }
+
+    .wave-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      font-weight: 900;
+      color: var(--accent);
+      text-transform: uppercase;
+      background: rgba(0, 255, 136, 0.1);
+      padding: 3px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      width: fit-content;
+      margin-bottom: 6px;
+    }
+
+    .wave-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .wave-status-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+
+    .wave-bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .wave-genre-hint {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .wave-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00ff88, #00d26a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
+      pointer-events: auto;
+    }
+
+    .section-head {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .track-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      position: relative;
+    }
+
+    .track-row.active {
+      border-color: var(--accent);
+      background: rgba(0, 255, 136, 0.07);
+    }
+
+    .track-row-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .track-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .track-details {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .track-name {
+      font-size: 15px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .track-author-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .artist-tag-btn {
+      color: #94a3b8;
+      cursor: pointer;
+      font-weight: 700;
+      border-bottom: 1px dashed rgba(255,255,255,0.2);
+    }
+
+    .agent-shield-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px;
+      background: rgba(0, 255, 136, 0.08);
+      border: 1px solid rgba(0, 255, 136, 0.35);
+      border-radius: 6px;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--accent);
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .offline-icon {
+      width: 14px;
+      height: 14px;
+      stroke: var(--accent);
+      stroke-width: 2.2;
+      fill: none;
+    }
+
+    .menu-trigger {
+      padding: 8px;
+      background: none;
+      border: none;
+      stroke: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* ЭКРАН ПРОФИЛЯ АРТИСТА */
+    #artist-view {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #030507;
+      z-index: 250;
+      flex-direction: column;
+      padding: max(20px, env(safe-area-inset-top)) 20px max(30px, env(safe-area-inset-bottom));
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .artist-header-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      padding: 20px 0 24px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .artist-avatar-wrap {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 25px var(--accent-glow);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #090d13;
+    }
+
+    .artist-avatar-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .artist-avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0d131a;
+      stroke: var(--text-muted);
+    }
+
+    .artist-name-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    #mini-player {
+      display: none;
+      position: fixed;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      left: 14px;
+      right: 14px;
+      background: rgba(9, 13, 19, 0.88);
+      backdrop-filter: blur(35px);
+      -webkit-backdrop-filter: blur(35px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 8px 12px;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    #full-player {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #030507;
+      z-index: 200;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: max(20px, env(safe-area-inset-top)) 24px max(34px, env(safe-area-inset-bottom));
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .cover-box {
+      width: 270px;
+      height: 270px;
+      margin: 0 auto;
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px var(--accent-glow);
+    }
+
+    .cover-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .visualizer-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      height: 26px;
+      margin-top: 6px;
+    }
+
+    .viz-bar {
+      width: 3px;
+      background: var(--accent);
+      border-radius: 4px;
+      height: 4px;
+      transition: height 0.1s ease;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      position: relative;
+      cursor: pointer;
+      padding: 10px 0;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #00ff88, #86efac);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .time-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    #agent-warning-box {
+      display: none;
+      background: rgba(0, 255, 136, 0.05);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 9px;
+      color: #86efac;
+      text-align: center;
+      line-height: 1.35;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .svg-btn {
+      background: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+    }
+    .svg-btn:active {
+      transform: scale(0.92);
+    }
+
+    .repeat-btn.active svg {
+      stroke: var(--accent);
+      filter: drop-shadow(0 0 8px var(--accent));
+    }
+    .repeat-btn.active::after {
+      content: '1';
+      position: absolute;
+      font-size: 9px;
+      font-weight: 900;
+      color: #030507;
+      background: var(--accent);
+      border-radius: 50%;
+      width: 13px;
+      height: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: -3px;
+      right: -3px;
+    }
+
+    .action-sheet {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 300;
+      display: none;
+      align-items: flex-end;
+    }
+
+    .sheet-content {
+      width: 100%;
+      background: #090d13;
+      border-top: 1px solid var(--card-border);
+      border-radius: 24px 24px 0 0;
+      padding: 20px 20px max(24px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: sheetUp 0.25s ease-out;
+    }
+
+    @keyframes sheetUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .sheet-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .sheet-btn.danger {
+      color: #f87171;
+    }
+
+    .article-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 400;
+      padding: max(20px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .article-card {
+      background: #090d13;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 20px;
+      padding: 22px;
+      max-height: 80vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .article-card h3 {
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .article-card p {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body onclick="unlockAudioSystem()">
+
+  <header>
+    <div class="brand-bar">
+      <div class="brand">
+        <img src="./IMG_2448.jpeg" class="brand-icon">
+        <span class="brand-title">ONYX</span>
+      </div>
+      <div id="conn-pill" class="connection-status">
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        <span id="conn-text">ОНЛАЙН</span>
+      </div>
+    </div>
+
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="smart-search" class="search-input" placeholder="Искать по словам, настроению или смыслу..." oninput="handleSmartSearch(this.value)">
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div class="wave-wrapper" onclick="toggleWavePlay()">
+      <canvas id="wave-canvas"></canvas>
+      <div class="wave-overlay">
+        <div>
+          <div class="wave-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            ONYX FLOW
+          </div>
+          <div class="wave-title">Моя Волна</div>
+          <div class="wave-status-desc" id="wave-desc">Умный поток под настроение</div>
+        </div>
+
+        <div class="wave-bottom-bar">
+          <span class="wave-genre-hint" id="wave-genre-hint">НАЖМИ ДЛЯ СТАРТА</span>
+          <div class="wave-btn" id="wave-btn-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#030507"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-head">
+        <span>Каталог треков</span>
+        <span id="offline-counter">Офлайн: 0</span>
+      </div>
+      <div id="tracks-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+  </main>
+
+  <!-- СТРАНИЦА ПРОФИЛЯ АРТИСТА -->
+  <div id="artist-view">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <button class="svg-btn" onclick="closeArtistProfile()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div style="font-size:11px; font-weight:800; letter-spacing:0.08em; color:var(--text-muted);">ПРОФИЛЬ АРТИСТА</div>
+      <div style="width:24px;"></div>
+    </div>
+
+    <div class="artist-header-box">
+      <div class="artist-avatar-wrap" id="artist-avatar-box"></div>
+      <div class="artist-name-title" id="artist-page-name">Артист</div>
+      <div id="artist-page-agent-badge" class="agent-shield-badge" style="display:none;" onclick="openAgentArticle(currentArtistSelected)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        ИНОАГЕНТ (СТ. 9 ФЗ-255)
+      </div>
+      <div style="font-size:12px; color:var(--text-muted);" id="artist-tracks-count">Треков: 0</div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <div class="section-head"><span>Треки исполнителя</span></div>
+      <div id="artist-tracks-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+  </div>
+
+  <div id="mini-player" onclick="openFullPlayer()">
+    <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+      <img id="mini-img" class="track-thumb" src="">
+      <div style="min-width:0;">
+        <div id="mini-title" class="track-name" style="max-width:180px;"></div>
+        <div id="mini-artist" class="track-author-line"></div>
+      </div>
+    </div>
+    <button class="svg-btn" onclick="event.stopPropagation(); togglePlay();" style="width:40px;height:40px;background:var(--accent);border-radius:50%;">
+      <svg id="mini-play-svg" width="18" height="18" viewBox="0 0 24 24" fill="#030507"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </button>
+  </div>
+
+  <div id="full-player">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <button class="svg-btn" onclick="closeFullPlayer()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div style="font-size:11px; font-weight:800; letter-spacing:0.08em; color:var(--text-muted);">ONYX HQ</div>
+      <div style="width:24px;"></div>
+    </div>
+
+    <div class="cover-box">
+      <img id="full-img" src="">
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div>
+        <div id="full-title" style="font-size:22px; font-weight:900;"></div>
+        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+          <span id="full-artist" class="artist-tag-btn" style="font-size:14px;" onclick="openArtistFromPlayer()"></span>
+          <div id="full-agent-badge" class="agent-shield-badge" style="display:none;" onclick="openAgentArticle()">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            ИНОАГЕНТ
+          </div>
+        </div>
+      </div>
+
+      <div class="visualizer-strip" id="visualizer-strip"></div>
+
+      <div id="agent-warning-box" onclick="openAgentArticle()">
+        МАТЕРИАЛ СОЗДАН И РАСПРОСТРАНЕН ИНОСТРАННЫМ АГЕНТОМ. НАЖМИТЕ ДЛЯ СПРАВКИ. 18+
+      </div>
+
+      <div class="progress-bar-wrap" onclick="seekByClick(event)">
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <div class="time-labels">
+          <span id="curr-time">0:00</span>
+          <span id="dur-time">0:00</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0 10px; margin-bottom:8px;">
+      <button class="svg-btn repeat-btn" id="repeat-btn" style="position:relative;" onclick="toggleRepeat()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="17 1 21 5 17 9"></polyline>
+          <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+          <polyline points="7 23 3 19 7 15"></polyline>
+          <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+        </svg>
+      </button>
+
+      <button class="svg-btn" onclick="prevTrack()">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+      </button>
+
+      <button class="svg-btn" onclick="togglePlay()" style="width:68px; height:68px; background:var(--accent); border-radius:50%; box-shadow:0 0 30px var(--accent-glow);">
+        <svg id="full-play-svg" width="28" height="28" viewBox="0 0 24 24" fill="#030507"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
+
+      <button class="svg-btn" onclick="nextTrack()">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </button>
+
+      <div style="width:22px;"></div>
+    </div>
+  </div>
+
+  <div id="action-sheet" class="action-sheet" onclick="closeSheet()">
+    <div class="sheet-content" onclick="event.stopPropagation()">
+      <div style="font-size:16px; font-weight:900;" id="sheet-track-title">Трек</div>
+      <button class="sheet-btn" id="sheet-download-btn" onclick="handleDownloadAction()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span id="sheet-download-label">Скачать в офлайн</span>
+      </button>
+      <button class="sheet-btn" onclick="closeSheet()" style="justify-content:center; background:none; border:none; color:var(--text-muted);">
+        Отмена
+      </button>
+    </div>
+  </div>
+
+  <div id="article-modal" class="article-modal">
+    <div class="article-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3>Правовой статус артиста</h3>
+        <button class="svg-btn" onclick="closeAgentArticle()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <p id="article-text-body">
+        Исполнитель внесён Министерством юстиции РФ в единый реестр физических лиц, выполняющих функции иностранного агента.
+      </p>
+      <p style="font-size:11px; color:#94a3b8;">
+        Согласно ст. 9 Федерального закона № 255-ФЗ, материал транслируется с обязательной маркировкой.
+      </p>
+      <a href="https://minjust.gov.ru" target="_blank" style="color:var(--accent); font-size:12px; font-weight:800; text-decoration:none; margin-top:6px;">
+        Официальный портал Минюста РФ →
+      </a>
+    </div>
+    <div></div>
+  </div>
+
+  <audio id="audio" preload="auto"></audio>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE_NAME = 'onyx-core-v7';
+        const ASSETS = ['./', './index.html', './tracks.json', './IMG_2448.jpeg'];
+        self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS))); self.skipWaiting(); });
+        self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+        self.addEventListener('fetch', e => {
+          e.respondWith(caches.match(e.request).then(c => c || fetch(e.request).catch(() => c)));
+        });
+      `;
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(console.warn);
+    }
+
+    function updateNetworkStatus() {
+      const pill = document.getElementById('conn-pill');
+      const text = document.getElementById('conn-text');
+      if (navigator.onLine) {
+        pill.style.borderColor = 'rgba(0, 255, 136, 0.25)';
+        pill.style.color = '#00ff88';
+        text.innerText = 'ОНЛАЙН';
+      } else {
+        pill.style.borderColor = 'rgba(255, 180, 0, 0.4)';
+        pill.style.color = '#ffb400';
+        text.innerText = 'ОФЛАЙН (КЭШ)';
+      }
+    }
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+    updateNetworkStatus();
+
+    let TRACKS = [];
+    const AUDIO_CACHE = 'onyx-audio-offline-v1';
+    let downloadedIds = new Set();
+    let selectedTrackForMenu = null;
+    let isRepeat = false;
+    let currentArtistSelected = '';
+
+    const SVG_QUESTION = `
+      <div class="artist-avatar-placeholder">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+    `;
+
+    function safeUrl(src) {
+      if (!src) return '';
+      return encodeURI(src.startsWith('./') ? src.slice(2) : src);
+    }
+
+    async function loadTracksData() {
+      try {
+        const res = await fetch('./tracks.json?' + Date.now());
+        TRACKS = await res.json();
+        localStorage.setItem('onyx_tracks_backup', JSON.stringify(TRACKS));
+      } catch (err) {
+        const backup = localStorage.getItem('onyx_tracks_backup');
+        if (backup) TRACKS = JSON.parse(backup);
+      }
+      initOfflineStore();
+    }
+
+    async function initOfflineStore() {
+      if ('caches' in window) {
+        const cache = await caches.open(AUDIO_CACHE);
+        for (const t of TRACKS) {
+          const match = await cache.match(safeUrl(t.src));
+          if (match) downloadedIds.add(t.id);
+        }
+      }
+      renderCatalog(TRACKS);
+      updateOfflineCount();
+    }
+
+    async function saveTrackOffline(track) {
+      if (!('caches' in window)) return;
+      const cache = await caches.open(AUDIO_CACHE);
+      try {
+        const targetSrc = safeUrl(track.src);
+        const targetCover = safeUrl(track.cover);
+        await cache.add(targetSrc);
+        if (targetCover) await cache.add(targetCover);
+        downloadedIds.add(track.id);
+        renderCatalog(TRACKS);
+        updateOfflineCount();
+        closeSheet();
+      } catch (err) {
+        alert('Ошибка загрузки в память. Проверьте сеть.');
+      }
+    }
+
+    async function removeTrackOffline(track) {
+      if (!('caches' in window)) return;
+      const cache = await caches.open(AUDIO_CACHE);
+      await cache.delete(safeUrl(track.src));
+      downloadedIds.delete(track.id);
+      renderCatalog(TRACKS);
+      updateOfflineCount();
+      closeSheet();
+    }
+
+    function updateOfflineCount() {
+      document.getElementById('offline-counter').innerText = `Офлайн: ${downloadedIds.size}`;
+    }
+
+    function renderCatalog(list) {
+      const container = document.getElementById('tracks-list');
+      container.innerHTML = '';
+
+      list.forEach(t => {
+        const globalIdx = TRACKS.findIndex(x => x.id === t.id);
+        const isCurrent = (globalIdx === currentIndex && isPlaying);
+        const isSaved = downloadedIds.has(t.id);
+
+        const row = document.createElement('div');
+        row.className = `track-row ${isCurrent ? 'active' : ''}`;
+
+        const agentBadge = t.isForeignAgent ? `
+          <div class="agent-shield-badge" onclick="event.stopPropagation(); openAgentArticle('${t.artist}')">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            ИНОАГЕНТ
+          </div>` : '';
+
+        const offlineCheck = isSaved ? `
+          <svg class="offline-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        ` : '';
+
+        row.innerHTML = `
+          <div class="track-row-left" onclick="playTrack(${globalIdx})">
+            <img src="${safeUrl(t.cover)}" class="track-thumb" onerror="this.src='./IMG_2448.jpeg'">
+            <div class="track-details">
+              <div class="track-name">
+                <span>${t.title}</span>
+                ${offlineCheck}
+              </div>
+              <div class="track-author-line">
+                <span class="artist-tag-btn" onclick="event.stopPropagation(); openArtistProfile('${t.artist}')">${t.artist}</span>
+                ${agentBadge}
+              </div>
+            </div>
+          </div>
+          <button class="menu-trigger" onclick="openTrackMenu(${globalIdx})">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="12" r="2"/></svg>
+          </button>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function openArtistProfile(artistName) {
+      currentArtistSelected = artistName;
+      const artistTracks = TRACKS.filter(t => t.artist.trim().toLowerCase() === artistName.trim().toLowerCase());
+      if (!artistTracks.length) return;
+
+      const first = artistTracks[0];
+      const avatarBox = document.getElementById('artist-avatar-box');
+
+      if (first.artistAvatar && first.artistAvatar.trim() !== '') {
+        avatarBox.innerHTML = `<img src="${safeUrl(first.artistAvatar)}" onerror="this.parentElement.innerHTML = SVG_QUESTION">`;
+      } else {
+        avatarBox.innerHTML = SVG_QUESTION;
+      }
+
+      document.getElementById('artist-page-name').innerText = artistName;
+      document.getElementById('artist-tracks-count').innerText = `Песен в Onyx: ${artistTracks.length}`;
+
+      const agentBadge = document.getElementById('artist-page-agent-badge');
+      agentBadge.style.display = first.isForeignAgent ? 'inline-flex' : 'none';
+
+      const listContainer = document.getElementById('artist-tracks-list');
+      listContainer.innerHTML = '';
+      artistTracks.forEach(t => {
+        const globalIdx = TRACKS.findIndex(x => x.id === t.id);
+        const row = document.createElement('div');
+        row.className = `track-row ${globalIdx === currentIndex && isPlaying ? 'active' : ''}`;
+        row.innerHTML = `
+          <div class="track-row-left" onclick="playTrack(${globalIdx})">
+            <img src="${safeUrl(t.cover)}" class="track-thumb" onerror="this.src='./IMG_2448.jpeg'">
+            <div class="track-details">
+              <div class="track-name"><span>${t.title}</span></div>
+              <div class="track-author-line"><span>${t.artist}</span></div>
+            </div>
+          </div>
+        `;
+        listContainer.appendChild(row);
+      });
+
+      document.getElementById('artist-view').style.display = 'flex';
+    }
+
+    function closeArtistProfile() {
+      document.getElementById('artist-view').style.display = 'none';
+    }
+
+    function openArtistFromPlayer() {
+      const t = TRACKS[currentIndex];
+      if (t) {
+        closeFullPlayer();
+        openArtistProfile(t.artist);
+      }
+    }
+
+    function openTrackMenu(idx) {
+      selectedTrackForMenu = TRACKS[idx];
+      const sheet = document.getElementById('action-sheet');
+      document.getElementById('sheet-track-title').innerText = selectedTrackForMenu.artist + ' — ' + selectedTrackForMenu.title;
+
+      const isSaved = downloadedIds.has(selectedTrackForMenu.id);
+      const label = document.getElementById('sheet-download-label');
+      const btn = document.getElementById('sheet-download-btn');
+
+      if (isSaved) {
+        label.innerText = 'Удалить из памяти устройства';
+        btn.className = 'sheet-btn danger';
+      } else {
+        label.innerText = 'Скачать в офлайн';
+        btn.className = 'sheet-btn';
+      }
+
+      sheet.style.display = 'flex';
+    }
+
+    function closeSheet() { document.getElementById('action-sheet').style.display = 'none'; }
+
+    function handleDownloadAction() {
+      if (!selectedTrackForMenu) return;
+      if (downloadedIds.has(selectedTrackForMenu.id)) removeTrackOffline(selectedTrackForMenu);
+      else saveTrackOffline(selectedTrackForMenu);
+    }
+
+    function openAgentArticle(artistName = "Монеточка") {
+      document.getElementById('article-text-body').innerText = 
+        `Исполнитель ${artistName} внесён в реестр иностранных агентов Минюста РФ. Сервис ONYX транслирует материалы в ознакомительном формате в соответствии с ФЗ № 255-ФЗ.`;
+      document.getElementById('article-modal').style.display = 'flex';
+    }
+
+    function closeAgentArticle() { document.getElementById('article-modal').style.display = 'none'; }
+
+    function handleSmartSearch(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) { renderCatalog(TRACKS); return; }
+      const filtered = TRACKS.filter(t => {
+        const textMatch = t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q);
+        const tagMatch = t.tags && t.tags.some(tag => tag.includes(q) || q.includes(tag));
+        return textMatch || tagMatch;
+      });
+      renderCatalog(filtered);
+    }
+
+    const audio = document.getElementById('audio');
+    let currentIndex = 0;
+    let isPlaying = false;
+    let isWaveActive = false;
+
+    function unlockAudioSystem() {
+      if (audio.paused && !audio.src && TRACKS.length > 0) {
+        audio.src = safeUrl(TRACKS[0].src);
+      }
+    }
+
+    function updateMediaSession(t) {
+      if ('mediaSession' in navigator) {
+        const absoluteCoverUrl = new URL(safeUrl(t.cover), window.location.href).href;
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: t.title,
+          artist: t.artist + (t.isForeignAgent ? ' (ИНОАГЕНТ)' : ''),
+          album: 'ONYX Music',
+          artwork: [
+            { src: absoluteCoverUrl, sizes: '96x96', type: 'image/jpeg' },
+            { src: absoluteCoverUrl, sizes: '128x128', type: 'image/jpeg' },
+            { src: absoluteCoverUrl, sizes: '192x192', type: 'image/jpeg' },
+            { src: absoluteCoverUrl, sizes: '256x256', type: 'image/jpeg' },
+            { src: absoluteCoverUrl, sizes: '384x384', type: 'image/jpeg' },
+            { src: absoluteCoverUrl, sizes: '512x512', type: 'image/jpeg' }
+          ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => togglePlay());
+        navigator.mediaSession.setActionHandler('pause', () => togglePlay());
+        navigator.mediaSession.setActionHandler('previoustrack', () => prevTrack());
+        navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
+      }
+    }
+
+    async function playTrack(idx) {
+      currentIndex = idx;
+      const t = TRACKS[currentIndex];
+      const targetSrc = safeUrl(t.src);
+
+      if (!navigator.onLine) {
+        const cache = await caches.open(AUDIO_CACHE);
+        const match = await cache.match(targetSrc);
+        if (match) {
+          const blob = await match.blob();
+          audio.src = URL.createObjectURL(blob);
+        } else {
+          alert('Трек не скачан в память!');
+          return;
+        }
+      } else {
+        audio.src = targetSrc;
+      }
+
+      audio.play().then(() => {
+        isPlaying = true;
+        updateUI();
+        updateMediaSession(t);
+      }).catch(e => {
+        console.warn('Playback error:', e);
+      });
+    }
+
+    function togglePlay() {
+      if (!audio.src) { playTrack(currentIndex); return; }
+      if (audio.paused) { 
+        audio.play(); 
+        isPlaying = true; 
+      } else { 
+        audio.pause(); 
+        isPlaying = false; 
+      }
+      updateUI();
+    }
+
+    function toggleRepeat() {
+      isRepeat = !isRepeat;
+      const btn = document.getElementById('repeat-btn');
+      if (isRepeat) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+
+    function toggleWavePlay() {
+      isWaveActive = true;
+      const randomIdx = Math.floor(Math.random() * TRACKS.length);
+      playTrack(randomIdx);
+    }
+
+    function prevTrack() {
+      currentIndex = (currentIndex - 1 + TRACKS.length) % TRACKS.length;
+      playTrack(currentIndex);
+    }
+
+    function nextTrack() {
+      if (isRepeat) {
+        audio.currentTime = 0;
+        audio.play();
+        return;
+      }
+      if (isWaveActive) {
+        let n = Math.floor(Math.random() * TRACKS.length);
+        if (TRACKS.length > 1 && n === currentIndex) n = (currentIndex + 1) % TRACKS.length;
+        playTrack(n);
+      } else {
+        currentIndex = (currentIndex + 1) % TRACKS.length;
+        playTrack(currentIndex);
+      }
+    }
+
+    function updateUI() {
+      const t = TRACKS[currentIndex];
+      if (!t) return;
+
+      const coverSrc = safeUrl(t.cover);
+
+      document.getElementById('mini-player').style.display = 'flex';
+      document.getElementById('mini-title').innerText = t.title;
+      document.getElementById('mini-artist').innerText = t.artist;
+      document.getElementById('mini-img').src = coverSrc;
+
+      document.getElementById('full-title').innerText = t.title;
+      document.getElementById('full-artist').innerText = t.artist;
+      document.getElementById('full-img').src = coverSrc;
+
+      const playSvg = `<polygon points="5 3 19 12 5 21 5 3"/>`;
+      const pauseSvg = `<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>`;
+
+      document.getElementById('mini-play-svg').innerHTML = isPlaying ? pauseSvg : playSvg;
+      document.getElementById('full-play-svg').innerHTML = isPlaying ? pauseSvg : playSvg;
+
+      const badge = document.getElementById('full-agent-badge');
+      const warning = document.getElementById('agent-warning-box');
+      if (t.isForeignAgent) {
+        badge.style.display = 'inline-flex';
+        warning.style.display = 'block';
+      } else {
+        badge.style.display = 'none';
+        warning.style.display = 'none';
+      }
+
+      document.getElementById('wave-desc').innerText = isPlaying 
+        ? `Играет: ${t.artist} — ${t.title}`
+        : `Умный поток под настроение`;
+
+      document.getElementById('wave-genre-hint').innerText = isPlaying
+        ? `ВАЙБ: ${t.tags ? t.tags[0].toUpperCase() : 'ONYX'}`
+        : `НАЖМИ ДЛЯ СТАРТА`;
+
+      renderCatalog(TRACKS);
+    }
+
+    audio.ontimeupdate = () => {
+      if (!audio.duration) return;
+      const pct = (audio.currentTime / audio.duration) * 100;
+      document.getElementById('progress-fill').style.width = pct + '%';
+
+      const m = Math.floor(audio.currentTime / 60);
+      const s = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+      document.getElementById('curr-time').innerText = `${m}:${s}`;
+
+      const dm = Math.floor(audio.duration / 60);
+      const ds = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+      document.getElementById('dur-time').innerText = `${dm}:${ds}`;
+    };
+
+    audio.onended = () => nextTrack();
+
+    function seekByClick(e) {
+      if (!audio.duration) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = clickX / rect.width;
+      audio.currentTime = pct * audio.duration;
+    }
+
+    function openFullPlayer() { document.getElementById('full-player').style.display = 'flex'; }
+    function closeFullPlayer() { document.getElementById('full-player').style.display = 'none'; }
+
+    const vizContainer = document.getElementById('visualizer-strip');
+    for (let i = 0; i < 28; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'viz-bar';
+      vizContainer.appendChild(bar);
+    }
+    const bars = document.querySelectorAll('.viz-bar');
+
+    function animateVisualizer() {
+      if (isPlaying) {
+        bars.forEach(b => {
+          const h = Math.floor(Math.random() * 22) + 4;
+          b.style.height = `${h}px`;
+        });
+      } else {
+        bars.forEach(b => b.style.height = '4px');
+      }
+      setTimeout(animateVisualizer, 100);
+    }
+    animateVisualizer();
+
+    const canvas = document.getElementById('wave-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, step = 0;
+
+    function resizeCanvas() {
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function renderWave() {
+      ctx.clearRect(0, 0, width, height);
+      step += isPlaying ? 0.035 : 0.015;
+
+      const colors = [
+        'rgba(0, 255, 136, 0.65)',
+        'rgba(0, 229, 255, 0.45)',
+        'rgba(168, 85, 247, 0.35)',
+        'rgba(0, 255, 136, 0.2)'
+      ];
+
+      for (let j = 0; j < 4; j++) {
+        ctx.beginPath();
+        ctx.lineWidth = j === 0 ? 3 : 2;
+        ctx.strokeStyle = colors[j];
+
+        const amp = isPlaying ? (28 + j * 6) : (14 + j * 4);
+        const freq = 0.009 + j * 0.002;
+
+        for (let x = 0; x < width; x += 3) {
+          const y = (height / 2) + Math.sin(x * freq + step * (1 + j * 0.2)) * amp * Math.cos(step * 0.4 + j);
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+
+      requestAnimationFrame(renderWave);
+    }
+    renderWave();
+
+    loadTracksData();
+  </script>
+</body>
+</html>
