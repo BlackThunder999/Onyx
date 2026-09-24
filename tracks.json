@@ -1,0 +1,38 @@
+[
+  {
+    "id": "monetochka_monopoly",
+    "title": "Монополия",
+    "artist": "Монеточка",
+    "isForeignAgent": true,
+    "cover": "./IMG_2445.jpeg",
+    "src": "Монеточка - Монополия.mp3",
+    "tags": ["монеточка", "монополия", "деньги", "игра", "поп", "девушка", "ирония"]
+  },
+  {
+    "id": "gazan_67",
+    "title": "67",
+    "artist": "Газан",
+    "isForeignAgent": false,
+    "cover": "./IMG_2450.jpeg",
+    "src": "69cad99888c50.mp3",
+    "tags": ["газан", "кач", "бас", "клуб", "число", "тренировка", "энергия", "тачка", "67"]
+  },
+  {
+    "id": "basta_na_zare",
+    "title": "На заре",
+    "artist": "Баста",
+    "isForeignAgent": false,
+    "cover": "./IMG_2456.jpeg",
+    "src": "Basta - На заре.mp3",
+    "tags": ["баста", "на заре", "голоса зовут меня", "ностальгия", "душа", "русский рэп", "грусть", "рассвет", "классика"]
+  },
+  {
+    "id": "feint_my_sunset",
+    "title": "My Sunset",
+    "artist": "Feint",
+    "isForeignAgent": false,
+    "cover": "./IMG_2458.jpeg",
+    "src": "Feint - My Sunset.mp3",
+    "tags": ["feint", "my sunset", "dnb", "drum and bass", "электроника", "закат", "скорость", "вайб", "тренировка", "бег"]
+  }
+]
