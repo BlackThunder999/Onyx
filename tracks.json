@@ -50,6 +50,26 @@
     "tags": ["баста", "чистый кайф", "кач", "рэп", "басы", "вайб", "дорога"]
   },
   {
+    "id": "dj_asul_matadora",
+    "title": "MATADORA",
+    "artist": "DJ Asul",
+    "artistAvatar": "",
+    "isForeignAgent": false,
+    "cover": "IMG_2506.jpeg",
+    "src": "DJ Asul - MATADORA.mp3",
+    "tags": ["dj asul", "matadora", "матадора", "фонк", "phonk", "бас", "дрифт", "кач"]
+  },
+  {
+    "id": "zxkai_ela_des",
+    "title": "ela des ela sobi nubaleprison",
+    "artist": "zxkai",
+    "artistAvatar": "",
+    "isForeignAgent": false,
+    "cover": "IMG_2506.jpeg",
+    "src": "zxkai-ela-des-ela-sobi-nubaleprison.mp3",
+    "tags": ["zxkai", "phonk", "фонк", "бразильский фонк", "тинджер", "кач"]
+  },
+  {
     "id": "videoclub_roi_slowed",
     "title": "Roi (Slowed + Reverb)",
     "artist": "VIDEOCLUB",
