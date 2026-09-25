@@ -50,6 +50,16 @@
     "tags": ["баста", "чистый кайф", "кач", "рэп", "басы", "вайб", "дорога"]
   },
   {
+    "id": "videoclub_roi_slowed",
+    "title": "Roi (Slowed + Reverb)",
+    "artist": "VIDEOCLUB",
+    "artistAvatar": "",
+    "isForeignAgent": false,
+    "cover": "IMG_2504.jpeg",
+    "src": "VIDEOCLUB_-_Roi_instrumental_-_slowed_reverb_(mp3.pm).mp3",
+    "tags": ["videoclub", "roi", "slowed", "reverb", "вайб", "атмосфера", "франция", "ночь", "эстетика"]
+  },
+  {
     "id": "gazan_67",
     "title": "67",
     "artist": "Газан",
