@@ -60,6 +60,16 @@
     "tags": ["газан", "кач", "бас", "клуб", "число", "тренировка", "энергия", "тачка", "67"]
   },
   {
+    "id": "enhypen_drunk_dazed",
+    "title": "Drunk-Dazed",
+    "artist": "ENHYPEN",
+    "artistAvatar": "",
+    "isForeignAgent": false,
+    "cover": "IMG_2498.webp",
+    "src": "ENHYPEN - Drunk-Dazed.mp3",
+    "tags": ["enhypen", "drunk-dazed", "k-pop", "kpop", "корейцы", "танцы", "поп", "дранк дейзд"]
+  },
+  {
     "id": "feint_my_sunset",
     "title": "My Sunset",
     "artist": "Feint",
